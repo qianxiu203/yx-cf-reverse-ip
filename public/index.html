@@ -4,203 +4,174 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>优选IP反查域名</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: #0F172A;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #000000;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #F8FAFC;
+      color: #E4E4E7;
     }
 
-    /* ========== Header ========== */
     header {
       text-align: center;
-      padding: 56px 20px 28px;
+      padding: 60px 20px 28px;
       width: 100%;
-      max-width: 720px;
+      max-width: 640px;
     }
     header h1 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 30px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-      color: #F8FAFC;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+      color: #FAFAFA;
     }
-    header h1 span {
-      color: #22C55E;
-    }
+    header h1 span { color: #22C55E; }
     header p {
-      margin-top: 10px;
-      font-size: 15px;
-      color: #94A3B8;
-      font-weight: 400;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #71717A;
     }
 
-    /* ========== Card ========== */
     .card {
       width: 100%;
-      max-width: 720px;
+      max-width: 640px;
       margin: 0 20px;
-      background: #1E293B;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: 0 4px 24px rgba(0,0,0,.4);
+      background: #111111;
+      border-radius: 12px;
+      padding: 24px;
     }
 
-    /* ========== Input Area ========== */
     .input-area {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 12px;
     }
     .input-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
     }
     .input-row input {
       flex: 1;
-      padding: 12px 16px;
-      background: #0F172A;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      font-size: 16px;
-      color: #F8FAFC;
-      font-family: 'Work Sans', sans-serif;
+      padding: 11px 14px;
+      background: #1A1A1A;
+      border: 1px solid #27272A;
+      border-radius: 8px;
+      font-size: 15px;
+      color: #E4E4E7;
       outline: none;
-      transition: border-color .2s;
+      transition: border-color .15s;
     }
-    .input-row input::placeholder { color: #64748B; }
+    .input-row input::placeholder { color: #52525B; }
     .input-row input:focus { border-color: #22C55E; }
     .input-row button {
-      padding: 12px 28px;
+      padding: 11px 24px;
       background: #22C55E;
-      color: #0F172A;
+      color: #000000;
       border: none;
-      border-radius: 10px;
-      font-size: 15px;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 600;
-      font-family: 'Work Sans', sans-serif;
       cursor: pointer;
-      transition: background .15s, transform .15s;
+      transition: background .15s;
       white-space: nowrap;
     }
     .input-row button:hover { background: #16A34A; }
-    .input-row button:active { transform: translateY(0); }
-    .input-row button:disabled { opacity: .4; cursor: not-allowed; }
+    .input-row button:disabled { opacity: .35; cursor: not-allowed; }
 
-    /* ========== Toggle Switch ========== */
     .option-row {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 0 4px;
+      gap: 10px;
     }
     .toggle-label {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       cursor: pointer;
-      user-select: none;
-      font-size: 14px;
-      color: #94A3B8;
+      font-size: 13px;
+      color: #71717A;
     }
     .toggle-label input { display: none; }
     .toggle-track {
       position: relative;
-      width: 40px;
-      height: 22px;
-      background: #334155;
-      border-radius: 11px;
-      transition: background .2s;
+      width: 36px;
+      height: 20px;
+      background: #27272A;
+      border-radius: 10px;
+      transition: background .15s;
       flex-shrink: 0;
     }
     .toggle-track::after {
       content: '';
       position: absolute;
-      top: 3px; left: 3px;
+      top: 2px; left: 2px;
       width: 16px; height: 16px;
-      background: #64748B;
+      background: #52525B;
       border-radius: 50%;
-      transition: transform .2s, background .2s;
+      transition: transform .15s, background .15s;
     }
-    .toggle-label input:checked + .toggle-track { background: rgba(34,197,94,.3); }
+    .toggle-label input:checked + .toggle-track { background: rgba(34,197,94,.25); }
     .toggle-label input:checked + .toggle-track::after {
-      transform: translateX(18px);
+      transform: translateX(16px);
       background: #22C55E;
     }
-    .option-row .hint {
-      font-size: 12px;
-      color: #475569;
-    }
+    .option-row .hint { font-size: 11px; color: #3F3F46; }
 
-    /* ========== Status & Error ========== */
     #status {
-      margin-top: 16px;
-      padding: 0 4px;
-      font-size: 14px;
-      color: #94A3B8;
-      min-height: 20px;
+      margin-top: 14px;
+      font-size: 13px;
+      color: #71717A;
+      min-height: 18px;
     }
     #status.error { color: #EF4444; }
 
-    /* ========== Results ========== */
     #result {
-      margin-top: 8px;
+      margin-top: 4px;
       display: none;
     }
     #result.visible { display: block; }
 
     .stat-bar {
       display: flex;
-      gap: 16px;
-      padding: 12px 16px;
-      background: #0F172A;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      color: #94A3B8;
+      gap: 20px;
+      padding: 10px 14px;
+      background: #1A1A1A;
+      border-radius: 8px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #71717A;
       flex-wrap: wrap;
     }
-    .stat-bar strong { color: #F8FAFC; }
+    .stat-bar strong { color: #E4E4E7; font-weight: 600; }
 
-    /* ========== Domain List ========== */
-    .domain-list { display: flex; flex-direction: column; gap: 6px; }
+    .domain-list { display: flex; flex-direction: column; gap: 4px; }
     .domain-item {
       display: flex;
       align-items: stretch;
-      gap: 0;
-      background: #0F172A;
-      border: 1px solid transparent;
-      border-radius: 10px;
-      font-size: 14px;
+      background: #1A1A1A;
+      border-radius: 8px;
+      font-size: 13px;
       overflow: hidden;
-      transition: border-color .15s;
+      transition: background .15s;
     }
-    .domain-item:hover { border-color: #334155; }
+    .domain-item:hover { background: #1E1E1E; }
 
     .domain-item .domain-body {
       flex: 1;
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 10px 14px;
+      padding: 9px 12px;
       min-width: 0;
-      cursor: default;
     }
     .domain-item .domain-name {
       flex: 1;
       min-width: 0;
       word-break: break-all;
-      color: #F8FAFC;
+      color: #E4E4E7;
       user-select: all;
     }
     .domain-item .domain-tags {
@@ -210,25 +181,20 @@
       flex-shrink: 0;
     }
     .domain-item .source-tag {
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 500;
-      padding: 2px 8px;
-      border-radius: 6px;
-      background: rgba(34,197,94,.12);
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: rgba(34,197,94,.1);
       color: #4ADE80;
-      white-space: nowrap;
     }
     .domain-item .ip-badge {
-      font-size: 11px;
-      color: #94A3B8;
-      background: rgba(255,255,255,.04);
-      padding: 2px 8px;
-      border-radius: 6px;
-      cursor: default;
-      white-space: nowrap;
-      transition: background .15s;
+      font-size: 10px;
+      color: #71717A;
+      background: rgba(255,255,255,.03);
+      padding: 2px 7px;
+      border-radius: 5px;
     }
-    .domain-item .ip-badge:hover { background: rgba(255,255,255,.08); }
 
     .btn-copy-domain {
       flex-shrink: 0;
@@ -236,111 +202,89 @@
       align-items: center;
       justify-content: center;
       gap: 4px;
-      padding: 0 14px;
+      padding: 0 12px;
+      min-width: 54px;
       background: transparent;
       border: none;
       border-left: 1px solid transparent;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
-      font-family: 'Work Sans', sans-serif;
-      color: #64748B;
+      font-family: inherit;
+      color: #52525B;
       cursor: pointer;
       transition: background .15s, color .15s;
-      min-width: 60px;
     }
-    .domain-item:hover .btn-copy-domain { border-left-color: #334155; }
-    .btn-copy-domain:hover {
-      background: rgba(34,197,94,.08);
-      color: #22C55E;
-    }
-    .btn-copy-domain:active { background: rgba(34,197,94,.15); }
-    .btn-copy-domain.copied {
-      color: #22C55E;
-      background: rgba(34,197,94,.1);
-    }
-    .btn-copy-domain .copy-icon {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-    }
+    .domain-item:hover .btn-copy-domain { border-left-color: #27272A; }
+    .btn-copy-domain:hover { background: rgba(34,197,94,.06); color: #22C55E; }
+    .btn-copy-domain.copied { color: #22C55E; }
 
-    /* ========== Toast ========== */
     .toast {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%);
       background: #22C55E;
-      color: #0F172A;
-      padding: 10px 24px;
-      border-radius: 10px;
-      font-size: 14px;
+      color: #000000;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 13px;
       font-weight: 500;
-      font-family: 'Work Sans', sans-serif;
+      font-family: inherit;
       opacity: 0;
-      transition: opacity .25s;
+      transition: opacity .2s;
       pointer-events: none;
       z-index: 100;
     }
     .toast.visible { opacity: 1; }
 
-    /* ========== IP List ========== */
     .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #94A3B8;
-      margin: 20px 0 10px;
-      padding: 0 4px;
-    }
-    .ip-list { display: flex; flex-wrap: wrap; gap: 6px; }
-    .ip-chip {
-      padding: 6px 12px;
-      background: #1E293B;
-      border: 1px solid #334155;
-      border-radius: 8px;
       font-size: 13px;
-      color: #94A3B8;
+      font-weight: 600;
+      color: #71717A;
+      margin: 18px 0 8px;
+    }
+    .ip-list { display: flex; flex-wrap: wrap; gap: 4px; }
+    .ip-chip {
+      padding: 5px 10px;
+      background: #1A1A1A;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #71717A;
       font-family: 'SF Mono', 'Fira Code', monospace;
       cursor: pointer;
       user-select: all;
-      transition: border-color .15s, color .15s;
+      transition: background .15s, color .15s;
     }
-    .ip-chip:hover {
-      border-color: #22C55E;
-      color: #F8FAFC;
-    }
+    .ip-chip:hover { background: #1E1E1E; color: #E4E4E7; }
 
-    /* ========== Footer ========== */
     footer {
       margin-top: 24px;
       padding: 20px;
       text-align: center;
-      font-size: 12px;
-      color: #475569;
+      font-size: 11px;
+      color: #3F3F46;
     }
-    footer a { color: #22C55E; text-decoration: none; }
-    footer a:hover { text-decoration: underline; }
+    footer a { color: #52525B; text-decoration: none; }
+    footer a:hover { color: #22C55E; }
 
-    /* ========== Responsive ========== */
     @media (max-width: 520px) {
-      header { padding: 36px 16px 20px; }
-      header h1 { font-size: 24px; }
-      .card { margin: 0 12px; padding: 20px; border-radius: 14px; }
+      header { padding: 40px 16px 20px; }
+      header h1 { font-size: 22px; }
+      .card { margin: 0 12px; padding: 20px; }
       .input-row { flex-direction: column; }
-      .input-row button { width: 100%; padding: 12px; }
+      .input-row button { width: 100%; padding: 11px; }
       .domain-item { flex-direction: column; }
-      .domain-item .domain-body { padding: 10px 12px 6px; flex-wrap: wrap; }
+      .domain-item .domain-body { padding: 9px 12px 5px; flex-wrap: wrap; }
       .domain-item .domain-tags { margin-left: auto; }
       .btn-copy-domain {
         width: 100%;
         min-width: unset;
-        padding: 8px 12px;
+        padding: 7px 12px;
         border-left: none;
         border-top: 1px solid transparent;
-        justify-content: center;
       }
-      .domain-item:hover .btn-copy-domain { border-top-color: #334155; border-left-color: transparent; }
-      .stat-bar { flex-direction: column; gap: 4px; }
+      .domain-item:hover .btn-copy-domain { border-top-color: #27272A; border-left-color: transparent; }
+      .stat-bar { flex-direction: column; gap: 3px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -361,7 +305,6 @@
       <input type="text" id="ipInput" placeholder="例如 162.159.32.192" spellcheck="false" autocomplete="off" />
       <button id="searchBtn" onclick="lookup()">查询</button>
     </div>
-
     <div class="option-row">
       <label class="toggle-label">
         <input type="checkbox" id="dnsCheck" />
@@ -412,24 +355,15 @@ domainList.addEventListener('click', e => {
   if (domain) copyText(decodeURIComponent(domain), btn);
 });
 
-const COPY_ICON = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-
-function showToast(msg) {
-  clearTimeout(toastTimer);
-  toast.textContent = msg;
-  toast.classList.add('visible');
-  toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
-}
-
 async function copyText(text, btn) {
   try {
     await navigator.clipboard.writeText(text);
     if (btn) {
       btn.classList.add('copied');
-      btn.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 已复制';
+      btn.textContent = '已复制';
       setTimeout(() => {
         btn.classList.remove('copied');
-        btn.innerHTML = `${COPY_ICON} 复制`;
+        btn.textContent = '复制';
       }, 2000);
     }
     showToast('已复制到剪贴板');
@@ -438,12 +372,16 @@ async function copyText(text, btn) {
   }
 }
 
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
+}
+
 async function lookup() {
   const ip = ipInput.value.trim();
-  if (!ip) {
-    setStatus('请输入 IP 地址', true);
-    return;
-  }
+  if (!ip) { setStatus('请输入 IP 地址', true); return; }
   if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
     setStatus('IP 格式不正确，请输入 IPv4 地址', true);
     return;
@@ -455,20 +393,13 @@ async function lookup() {
 
   const doDns = dnsCheck.checked;
   const params = new URLSearchParams({ ip, dns: doDns ? '1' : '' });
-  const url = '/api/lookup?' + params.toString();
 
   try {
-    const resp = await fetch(url);
+    const resp = await fetch('/api/lookup?' + params.toString());
     const data = await resp.json();
-
-    if (data.error) {
-      setStatus('查询失败：' + data.error, true);
-      return;
-    }
-
+    if (data.error) { setStatus('查询失败：' + data.error, true); return; }
     renderResults(data);
     setStatus(`共找到 ${data.total} 个域名` + (data.ips?.length ? `，解析出 ${data.ips.length} 个 IP` : ''), false);
-
   } catch (e) {
     setStatus('网络错误：' + e.message, true);
   } finally {
@@ -484,22 +415,21 @@ function setStatus(msg, isError) {
 function renderResults(data) {
   statBar.innerHTML = `
     <span>域名 <strong>${data.total}</strong></span>
-    <span>数据来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
+    <span>来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
     ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
   `;
 
   domainList.innerHTML = data.domains.map(d => {
     const ips = d.ips?.length ? `<span class="ip-badge" title="${d.ips.join(', ')}">${d.ips.length} IP</span>` : '';
-    const domain = escapeHtml(d.domain);
     return `<div class="domain-item" data-domain="${encodeURIComponent(d.domain)}">
       <div class="domain-body">
-        <span class="domain-name">${domain}</span>
+        <span class="domain-name">${escapeHtml(d.domain)}</span>
         <span class="domain-tags">
           <span class="source-tag">${d.source}</span>
           ${ips}
         </span>
       </div>
-      <button class="btn-copy-domain">${COPY_ICON} 复制</button>
+      <button class="btn-copy-domain">复制</button>
     </div>`;
   }).join('');
 
