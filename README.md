@@ -1,6 +1,6 @@
 # 优选IP反查域名
 
-> 灵感来源于 [snowfal1/CloudflareCDNFission](https://github.com/snowfal1/CloudflareCDNFission)
+> 项目复刻 [snowfal1/CloudflareCDNFission](https://github.com/snowfal1/CloudflareCDNFission)
 
 输入一个 IP 地址，自动从多个数据源反查出该 IP 上托管的所有域名，可选 DNS 解析发现更多关联 IP。
 
@@ -50,7 +50,7 @@
 
 ### 使用
 
-输入 IP 地址即可查询。
+输入 IP 地址即可查询。IP获取链接例如：https://www.wetest.vip
 
 - 开启 **解析 DNS 发现更多 IP** 会对查到的域名做 DNS 解析，结果显示更多关联 IP
 - 每个域名右侧有 **复制** 按钮，点击即可复制该域名
