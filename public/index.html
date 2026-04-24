@@ -4,39 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>优选IP反查域名</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
-    /* ========== Reset & Base ========== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 40%, #24243e 100%);
+      font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0F172A;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #e0e0e0;
+      color: #F8FAFC;
     }
 
     /* ========== Header ========== */
     header {
       text-align: center;
-      padding: 48px 20px 24px;
+      padding: 56px 20px 28px;
       width: 100%;
       max-width: 720px;
     }
     header h1 {
-      font-size: 28px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 30px;
       font-weight: 700;
-      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
       letter-spacing: -0.5px;
+      color: #F8FAFC;
+    }
+    header h1 span {
+      color: #22C55E;
     }
     header p {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #94a3b8;
+      margin-top: 10px;
+      font-size: 15px;
+      color: #94A3B8;
+      font-weight: 400;
     }
 
     /* ========== Card ========== */
@@ -44,13 +48,11 @@
       width: 100%;
       max-width: 720px;
       margin: 0 20px;
-      background: rgba(30, 30, 70, 0.6);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 20px;
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 16px;
       padding: 28px;
-      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+      box-shadow: 0 4px 24px rgba(0,0,0,.4);
     }
 
     /* ========== Input Area ========== */
@@ -66,31 +68,33 @@
     .input-row input {
       flex: 1;
       padding: 12px 16px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 12px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
       font-size: 16px;
-      color: #fff;
+      color: #F8FAFC;
+      font-family: 'Work Sans', sans-serif;
       outline: none;
-      transition: border .2s, background .2s;
+      transition: border-color .2s;
     }
-    .input-row input::placeholder { color: #64748b; }
-    .input-row input:focus { border-color: #60a5fa; background: rgba(255,255,255,0.1); }
+    .input-row input::placeholder { color: #64748B; }
+    .input-row input:focus { border-color: #22C55E; }
     .input-row button {
       padding: 12px 28px;
-      background: linear-gradient(135deg, #60a5fa, #7c3aed);
-      color: #fff;
+      background: #22C55E;
+      color: #0F172A;
       border: none;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 15px;
       font-weight: 600;
+      font-family: 'Work Sans', sans-serif;
       cursor: pointer;
-      transition: transform .15s, box-shadow .2s;
+      transition: background .15s, transform .15s;
       white-space: nowrap;
     }
-    .input-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(96,165,250,.35); }
+    .input-row button:hover { background: #16A34A; }
     .input-row button:active { transform: translateY(0); }
-    .input-row button:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+    .input-row button:disabled { opacity: .4; cursor: not-allowed; }
 
     /* ========== Toggle Switch ========== */
     .option-row {
@@ -106,14 +110,14 @@
       cursor: pointer;
       user-select: none;
       font-size: 14px;
-      color: #94a3b8;
+      color: #94A3B8;
     }
     .toggle-label input { display: none; }
     .toggle-track {
       position: relative;
       width: 40px;
       height: 22px;
-      background: rgba(255,255,255,0.12);
+      background: #334155;
       border-radius: 11px;
       transition: background .2s;
       flex-shrink: 0;
@@ -123,14 +127,14 @@
       position: absolute;
       top: 3px; left: 3px;
       width: 16px; height: 16px;
-      background: #64748b;
+      background: #64748B;
       border-radius: 50%;
       transition: transform .2s, background .2s;
     }
-    .toggle-label input:checked + .toggle-track { background: rgba(96,165,250,.35); }
+    .toggle-label input:checked + .toggle-track { background: rgba(34,197,94,.3); }
     .toggle-label input:checked + .toggle-track::after {
       transform: translateX(18px);
-      background: #60a5fa;
+      background: #22C55E;
     }
     .option-row .hint {
       font-size: 12px;
@@ -142,10 +146,10 @@
       margin-top: 16px;
       padding: 0 4px;
       font-size: 14px;
-      color: #94a3b8;
+      color: #94A3B8;
       min-height: 20px;
     }
-    #status.error { color: #f87171; }
+    #status.error { color: #EF4444; }
 
     /* ========== Results ========== */
     #result {
@@ -158,14 +162,15 @@
       display: flex;
       gap: 16px;
       padding: 12px 16px;
-      background: rgba(255,255,255,0.04);
+      background: #0F172A;
+      border: 1px solid #334155;
       border-radius: 10px;
       margin-bottom: 16px;
       font-size: 13px;
-      color: #94a3b8;
+      color: #94A3B8;
       flex-wrap: wrap;
     }
-    .stat-bar strong { color: #e0e0e0; }
+    .stat-bar strong { color: #F8FAFC; }
 
     /* ========== Domain List ========== */
     .domain-list { display: flex; flex-direction: column; gap: 6px; }
@@ -174,56 +179,60 @@
       align-items: center;
       gap: 8px;
       padding: 10px 14px;
-      background: rgba(255,255,255,0.04);
+      background: #0F172A;
+      border: 1px solid transparent;
       border-radius: 10px;
       font-size: 14px;
-      transition: background .15s;
+      cursor: default;
+      transition: border-color .15s, background .15s;
     }
-    .domain-item:hover { background: rgba(255,255,255,0.07); }
+    .domain-item:hover {
+      border-color: #334155;
+      background: rgba(255,255,255,.02);
+    }
     .domain-item .domain-name {
       flex: 1;
       word-break: break-all;
-      color: #e0e0e0;
+      color: #F8FAFC;
     }
     .domain-item .source-tag {
       font-size: 11px;
+      font-weight: 500;
       padding: 2px 8px;
       border-radius: 6px;
-      background: rgba(96,165,250,0.15);
-      color: #93c5fd;
+      background: rgba(34,197,94,.12);
+      color: #4ADE80;
       white-space: nowrap;
       flex-shrink: 0;
     }
     .domain-item .ip-badge {
       font-size: 11px;
-      color: #64748b;
-      background: rgba(255,255,255,0.05);
+      color: #94A3B8;
+      background: rgba(255,255,255,.04);
       padding: 2px 8px;
       border-radius: 6px;
       cursor: default;
-      position: relative;
       flex-shrink: 0;
+      transition: background .15s;
     }
-    .domain-item .ip-badge:hover {
-      background: rgba(255,255,255,0.1);
-    }
+    .domain-item .ip-badge:hover { background: rgba(255,255,255,.08); }
 
     /* ========== IP List ========== */
     .section-title {
       font-size: 14px;
       font-weight: 600;
-      color: #94a3b8;
+      color: #94A3B8;
       margin: 20px 0 10px;
       padding: 0 4px;
     }
     .ip-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .ip-chip {
       padding: 6px 12px;
-      background: rgba(167,139,250,0.1);
-      border: 1px solid rgba(167,139,250,0.15);
+      background: #1E293B;
+      border: 1px solid #334155;
       border-radius: 8px;
       font-size: 13px;
-      color: #c4b5fd;
+      color: #94A3B8;
       font-family: 'SF Mono', 'Fira Code', monospace;
     }
 
@@ -235,26 +244,30 @@
       font-size: 12px;
       color: #475569;
     }
-    footer a { color: #60a5fa; text-decoration: none; }
+    footer a { color: #22C55E; text-decoration: none; }
     footer a:hover { text-decoration: underline; }
 
     /* ========== Responsive ========== */
     @media (max-width: 520px) {
-      header { padding: 32px 16px 16px; }
-      header h1 { font-size: 22px; }
-      .card { margin: 0 12px; padding: 20px; border-radius: 16px; }
+      header { padding: 36px 16px 20px; }
+      header h1 { font-size: 24px; }
+      .card { margin: 0 12px; padding: 20px; border-radius: 14px; }
       .input-row { flex-direction: column; }
       .input-row button { width: 100%; padding: 12px; }
       .domain-item { flex-wrap: wrap; }
       .domain-item .source-tag { order: -1; }
       .stat-bar { flex-direction: column; gap: 4px; }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { transition-duration: 0s !important; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>优选IP反查域名</h1>
+  <h1>优选IP<span>反查域名</span></h1>
   <p>输入一个 IP 地址，查出它背后托管的所有域名</p>
 </header>
 
@@ -280,7 +293,7 @@
   <div id="result">
     <div class="stat-bar" id="statBar"></div>
     <div class="domain-list" id="domainList"></div>
-    <div class="section-title" id="ipsTitle" style="display:none">📌 解析出的 IP</div>
+    <div class="section-title" id="ipsTitle" style="display:none">解析出的 IP</div>
     <div class="ip-list" id="ipList"></div>
   </div>
 </div>
@@ -347,14 +360,12 @@ function setStatus(msg, isError) {
 }
 
 function renderResults(data) {
-  // Stats
   statBar.innerHTML = `
     <span>域名 <strong>${data.total}</strong></span>
     <span>数据来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
     ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
   `;
 
-  // Domains
   domainList.innerHTML = data.domains.map(d => {
     const ips = d.ips?.length ? `<span class="ip-badge" title="${d.ips.join(', ')}">${d.ips.length} IP</span>` : '';
     return `<div class="domain-item">
@@ -364,7 +375,6 @@ function renderResults(data) {
     </div>`;
   }).join('');
 
-  // IPs
   if (data.ips?.length) {
     ipsTitle.style.display = 'block';
     ipList.innerHTML = data.ips.map(ip => `<span class="ip-chip">${ip}</span>`).join('');
