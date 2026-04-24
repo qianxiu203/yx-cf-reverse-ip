@@ -4,132 +4,148 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>优选IP反查域名</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-      background: #000000;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #1A1A2E;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       color: #E4E4E7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     header {
       text-align: center;
-      padding: 60px 20px 28px;
+      padding: 64px 20px 32px;
       width: 100%;
       max-width: 640px;
     }
     header h1 {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 600;
-      letter-spacing: -0.3px;
+      letter-spacing: -0.4px;
       color: #FAFAFA;
     }
-    header h1 span { color: #22C55E; }
+    header h1 span {
+      color: #D97706;
+    }
     header p {
-      margin-top: 8px;
-      font-size: 14px;
-      color: #71717A;
+      margin-top: 10px;
+      font-size: 15px;
+      color: #A1A1AA;
+      font-weight: 400;
     }
 
     .card {
       width: 100%;
       max-width: 640px;
       margin: 0 20px;
-      background: #111111;
-      border-radius: 12px;
-      padding: 24px;
+      background: #252538;
+      border: 1px solid #3A3A50;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 2px 16px rgba(0,0,0,.3);
     }
 
     .input-area {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
     .input-row {
       display: flex;
-      gap: 8px;
+      gap: 10px;
     }
     .input-row input {
       flex: 1;
-      padding: 11px 14px;
-      background: #1A1A1A;
-      border: 1px solid #27272A;
-      border-radius: 8px;
+      padding: 12px 16px;
+      background: #1A1A2E;
+      border: 1px solid #3A3A50;
+      border-radius: 10px;
       font-size: 15px;
-      color: #E4E4E7;
+      color: #FAFAFA;
+      font-family: inherit;
       outline: none;
-      transition: border-color .15s;
+      transition: border-color .15s, box-shadow .15s;
     }
     .input-row input::placeholder { color: #52525B; }
-    .input-row input:focus { border-color: #22C55E; }
+    .input-row input:focus {
+      border-color: #D97706;
+      box-shadow: 0 0 0 3px rgba(217,119,6,.15);
+    }
     .input-row button {
-      padding: 11px 24px;
-      background: #22C55E;
-      color: #000000;
+      padding: 12px 28px;
+      background: #D97706;
+      color: #FAFAFA;
       border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 500;
+      font-family: inherit;
       cursor: pointer;
       transition: background .15s;
       white-space: nowrap;
     }
-    .input-row button:hover { background: #16A34A; }
+    .input-row button:hover { background: #B45309; }
     .input-row button:disabled { opacity: .35; cursor: not-allowed; }
 
     .option-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
+      padding: 0 2px;
     }
     .toggle-label {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       cursor: pointer;
-      font-size: 13px;
-      color: #71717A;
+      font-size: 14px;
+      color: #A1A1AA;
     }
     .toggle-label input { display: none; }
     .toggle-track {
       position: relative;
-      width: 36px;
-      height: 20px;
-      background: #27272A;
-      border-radius: 10px;
+      width: 38px;
+      height: 22px;
+      background: #3A3A50;
+      border-radius: 11px;
       transition: background .15s;
       flex-shrink: 0;
     }
     .toggle-track::after {
       content: '';
       position: absolute;
-      top: 2px; left: 2px;
+      top: 3px; left: 3px;
       width: 16px; height: 16px;
-      background: #52525B;
+      background: #71717A;
       border-radius: 50%;
       transition: transform .15s, background .15s;
     }
-    .toggle-label input:checked + .toggle-track { background: rgba(34,197,94,.25); }
+    .toggle-label input:checked + .toggle-track { background: rgba(217,119,6,.25); }
     .toggle-label input:checked + .toggle-track::after {
       transform: translateX(16px);
-      background: #22C55E;
+      background: #D97706;
     }
-    .option-row .hint { font-size: 11px; color: #3F3F46; }
+    .option-row .hint { font-size: 12px; color: #52525B; }
 
     #status {
-      margin-top: 14px;
-      font-size: 13px;
-      color: #71717A;
-      min-height: 18px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: #A1A1AA;
+      min-height: 20px;
     }
     #status.error { color: #EF4444; }
 
     #result {
-      margin-top: 4px;
+      margin-top: 8px;
       display: none;
     }
     #result.visible { display: block; }
@@ -137,34 +153,36 @@
     .stat-bar {
       display: flex;
       gap: 20px;
-      padding: 10px 14px;
-      background: #1A1A1A;
-      border-radius: 8px;
-      margin-bottom: 14px;
-      font-size: 12px;
-      color: #71717A;
+      padding: 12px 16px;
+      background: #1A1A2E;
+      border: 1px solid #3A3A50;
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #A1A1AA;
       flex-wrap: wrap;
     }
-    .stat-bar strong { color: #E4E4E7; font-weight: 600; }
+    .stat-bar strong { color: #FAFAFA; font-weight: 500; }
 
-    .domain-list { display: flex; flex-direction: column; gap: 4px; }
+    .domain-list { display: flex; flex-direction: column; gap: 6px; }
     .domain-item {
       display: flex;
       align-items: stretch;
-      background: #1A1A1A;
-      border-radius: 8px;
-      font-size: 13px;
+      background: #1A1A2E;
+      border: 1px solid #3A3A50;
+      border-radius: 10px;
+      font-size: 14px;
       overflow: hidden;
-      transition: background .15s;
+      transition: border-color .15s;
     }
-    .domain-item:hover { background: #1E1E1E; }
+    .domain-item:hover { border-color: #52527A; }
 
     .domain-item .domain-body {
       flex: 1;
       display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
+      gap: 10px;
+      padding: 10px 14px;
       min-width: 0;
     }
     .domain-item .domain-name {
@@ -177,23 +195,23 @@
     .domain-item .domain-tags {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       flex-shrink: 0;
     }
     .domain-item .source-tag {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 500;
-      padding: 2px 7px;
-      border-radius: 5px;
-      background: rgba(34,197,94,.1);
-      color: #4ADE80;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(217,119,6,.12);
+      color: #F59E0B;
     }
     .domain-item .ip-badge {
-      font-size: 10px;
-      color: #71717A;
-      background: rgba(255,255,255,.03);
-      padding: 2px 7px;
-      border-radius: 5px;
+      font-size: 11px;
+      color: #A1A1AA;
+      background: rgba(255,255,255,.04);
+      padding: 3px 8px;
+      border-radius: 6px;
     }
 
     .btn-copy-domain {
@@ -201,33 +219,32 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 0 12px;
-      min-width: 54px;
+      padding: 0 16px;
+      min-width: 60px;
       background: transparent;
       border: none;
       border-left: 1px solid transparent;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       font-family: inherit;
-      color: #52525B;
+      color: #71717A;
       cursor: pointer;
       transition: background .15s, color .15s;
     }
-    .domain-item:hover .btn-copy-domain { border-left-color: #27272A; }
-    .btn-copy-domain:hover { background: rgba(34,197,94,.06); color: #22C55E; }
-    .btn-copy-domain.copied { color: #22C55E; }
+    .domain-item:hover .btn-copy-domain { border-left-color: #3A3A50; }
+    .btn-copy-domain:hover { background: rgba(217,119,6,.08); color: #F59E0B; }
+    .btn-copy-domain.copied { color: #F59E0B; }
 
     .toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%);
-      background: #22C55E;
-      color: #000000;
-      padding: 8px 20px;
-      border-radius: 8px;
-      font-size: 13px;
+      background: #D97706;
+      color: #FAFAFA;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 500;
       font-family: inherit;
       opacity: 0;
@@ -238,53 +255,57 @@
     .toast.visible { opacity: 1; }
 
     .section-title {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 600;
-      color: #71717A;
-      margin: 18px 0 8px;
+      color: #A1A1AA;
+      margin: 20px 0 10px;
     }
-    .ip-list { display: flex; flex-wrap: wrap; gap: 4px; }
+    .ip-list { display: flex; flex-wrap: wrap; gap: 6px; }
     .ip-chip {
-      padding: 5px 10px;
-      background: #1A1A1A;
-      border-radius: 6px;
-      font-size: 12px;
-      color: #71717A;
+      padding: 6px 12px;
+      background: #1A1A2E;
+      border: 1px solid #3A3A50;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #A1A1AA;
       font-family: 'SF Mono', 'Fira Code', monospace;
       cursor: pointer;
       user-select: all;
-      transition: background .15s, color .15s;
+      transition: border-color .15s, color .15s;
     }
-    .ip-chip:hover { background: #1E1E1E; color: #E4E4E7; }
+    .ip-chip:hover {
+      border-color: #52527A;
+      color: #E4E4E7;
+    }
 
     footer {
-      margin-top: 24px;
+      margin-top: 28px;
       padding: 20px;
       text-align: center;
-      font-size: 11px;
-      color: #3F3F46;
+      font-size: 12px;
+      color: #52525B;
     }
-    footer a { color: #52525B; text-decoration: none; }
-    footer a:hover { color: #22C55E; }
+    footer a { color: #71717A; text-decoration: none; }
+    footer a:hover { color: #D97706; }
 
     @media (max-width: 520px) {
       header { padding: 40px 16px 20px; }
-      header h1 { font-size: 22px; }
-      .card { margin: 0 12px; padding: 20px; }
+      header h1 { font-size: 24px; }
+      .card { margin: 0 12px; padding: 20px; border-radius: 14px; }
       .input-row { flex-direction: column; }
-      .input-row button { width: 100%; padding: 11px; }
+      .input-row button { width: 100%; }
       .domain-item { flex-direction: column; }
-      .domain-item .domain-body { padding: 9px 12px 5px; flex-wrap: wrap; }
+      .domain-item .domain-body { padding: 10px 14px 6px; flex-wrap: wrap; }
       .domain-item .domain-tags { margin-left: auto; }
       .btn-copy-domain {
         width: 100%;
         min-width: unset;
-        padding: 7px 12px;
+        padding: 8px;
         border-left: none;
         border-top: 1px solid transparent;
       }
-      .domain-item:hover .btn-copy-domain { border-top-color: #27272A; border-left-color: transparent; }
-      .stat-bar { flex-direction: column; gap: 3px; }
+      .domain-item:hover .btn-copy-domain { border-top-color: #3A3A50; border-left-color: transparent; }
+      .stat-bar { flex-direction: column; gap: 4px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
