@@ -172,28 +172,66 @@
     }
     .stat-bar strong { color: #F8FAFC; }
 
+    /* ========== Result Toolbar ========== */
+    .result-toolbar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+    .btn-copy-all {
+      padding: 6px 16px;
+      background: transparent;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      font-family: 'Work Sans', sans-serif;
+      color: #94A3B8;
+      cursor: pointer;
+      transition: border-color .15s, color .15s;
+    }
+    .btn-copy-all:hover {
+      border-color: #22C55E;
+      color: #22C55E;
+    }
+    .btn-copy-all:active { opacity: .7; }
+
     /* ========== Domain List ========== */
     .domain-list { display: flex; flex-direction: column; gap: 6px; }
     .domain-item {
       display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 14px;
+      align-items: stretch;
+      gap: 0;
       background: #0F172A;
       border: 1px solid transparent;
       border-radius: 10px;
       font-size: 14px;
-      cursor: default;
-      transition: border-color .15s, background .15s;
+      overflow: hidden;
+      transition: border-color .15s;
     }
-    .domain-item:hover {
-      border-color: #334155;
-      background: rgba(255,255,255,.02);
+    .domain-item:hover { border-color: #334155; }
+
+    .domain-item .domain-body {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      min-width: 0;
+      cursor: default;
     }
     .domain-item .domain-name {
       flex: 1;
+      min-width: 0;
       word-break: break-all;
       color: #F8FAFC;
+      user-select: all;
+    }
+    .domain-item .domain-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
     .domain-item .source-tag {
       font-size: 11px;
@@ -203,7 +241,6 @@
       background: rgba(34,197,94,.12);
       color: #4ADE80;
       white-space: nowrap;
-      flex-shrink: 0;
     }
     .domain-item .ip-badge {
       font-size: 11px;
@@ -212,10 +249,64 @@
       padding: 2px 8px;
       border-radius: 6px;
       cursor: default;
-      flex-shrink: 0;
+      white-space: nowrap;
       transition: background .15s;
     }
     .domain-item .ip-badge:hover { background: rgba(255,255,255,.08); }
+
+    .btn-copy-domain {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 0 14px;
+      background: transparent;
+      border: none;
+      border-left: 1px solid transparent;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'Work Sans', sans-serif;
+      color: #64748B;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      min-width: 60px;
+    }
+    .domain-item:hover .btn-copy-domain { border-left-color: #334155; }
+    .btn-copy-domain:hover {
+      background: rgba(34,197,94,.08);
+      color: #22C55E;
+    }
+    .btn-copy-domain:active { background: rgba(34,197,94,.15); }
+    .btn-copy-domain.copied {
+      color: #22C55E;
+      background: rgba(34,197,94,.1);
+    }
+    .btn-copy-domain .copy-icon {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+    }
+
+    /* ========== Toast ========== */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #22C55E;
+      color: #0F172A;
+      padding: 10px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      font-family: 'Work Sans', sans-serif;
+      opacity: 0;
+      transition: opacity .25s;
+      pointer-events: none;
+      z-index: 100;
+    }
+    .toast.visible { opacity: 1; }
 
     /* ========== IP List ========== */
     .section-title {
@@ -234,6 +325,13 @@
       font-size: 13px;
       color: #94A3B8;
       font-family: 'SF Mono', 'Fira Code', monospace;
+      cursor: pointer;
+      user-select: all;
+      transition: border-color .15s, color .15s;
+    }
+    .ip-chip:hover {
+      border-color: #22C55E;
+      color: #F8FAFC;
     }
 
     /* ========== Footer ========== */
@@ -254,9 +352,21 @@
       .card { margin: 0 12px; padding: 20px; border-radius: 14px; }
       .input-row { flex-direction: column; }
       .input-row button { width: 100%; padding: 12px; }
-      .domain-item { flex-wrap: wrap; }
-      .domain-item .source-tag { order: -1; }
+      .domain-item { flex-direction: column; }
+      .domain-item .domain-body { padding: 10px 12px 6px; flex-wrap: wrap; }
+      .domain-item .domain-tags { margin-left: auto; }
+      .btn-copy-domain {
+        width: 100%;
+        min-width: unset;
+        padding: 8px 12px;
+        border-left: none;
+        border-top: 1px solid transparent;
+        justify-content: center;
+      }
+      .domain-item:hover .btn-copy-domain { border-top-color: #334155; border-left-color: transparent; }
       .stat-bar { flex-direction: column; gap: 4px; }
+      .result-toolbar { justify-content: stretch; }
+      .btn-copy-all { width: 100%; text-align: center; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -292,11 +402,16 @@
 
   <div id="result">
     <div class="stat-bar" id="statBar"></div>
+    <div class="result-toolbar">
+      <button class="btn-copy-all" id="copyAllBtn" onclick="copyAllDomains()">复制全部</button>
+    </div>
     <div class="domain-list" id="domainList"></div>
     <div class="section-title" id="ipsTitle" style="display:none">解析出的 IP</div>
     <div class="ip-list" id="ipList"></div>
   </div>
 </div>
+
+<div class="toast" id="toast"></div>
 
 <footer>
   powered by Cloudflare Pages &middot;
@@ -313,8 +428,42 @@ const statBar = document.getElementById('statBar');
 const domainList = document.getElementById('domainList');
 const ipsTitle = document.getElementById('ipsTitle');
 const ipList = document.getElementById('ipList');
+const toast = document.getElementById('toast');
+let toastTimer = null;
 
 ipInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+const COPY_ICON = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+
+function showToast(msg) {
+  clearTimeout(toastTimer);
+  toast.textContent = msg;
+  toast.classList.add('visible');
+  toastTimer = setTimeout(() => toast.classList.remove('visible'), 2000);
+}
+
+async function copyText(text, btn) {
+  try {
+    await navigator.clipboard.writeText(text);
+    if (btn) {
+      btn.classList.add('copied');
+      btn.innerHTML = '<svg class="copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> 已复制';
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        btn.innerHTML = `${COPY_ICON} 复制`;
+      }, 2000);
+    }
+    showToast('已复制到剪贴板');
+  } catch {
+    showToast('复制失败');
+  }
+}
+
+function copyAllDomains() {
+  const names = window._domainNames || [];
+  if (names.length === 0) { showToast('没有可复制的域名'); return; }
+  copyText(names.join('\n'), document.getElementById('copyAllBtn'));
+}
 
 async function lookup() {
   const ip = ipInput.value.trim();
@@ -366,12 +515,23 @@ function renderResults(data) {
     ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
   `;
 
+  window._domainNames = data.domains.map(d => d.domain);
+
+  document.getElementById('copyAllBtn').innerHTML = `${COPY_ICON} 复制全部`;
+
   domainList.innerHTML = data.domains.map(d => {
     const ips = d.ips?.length ? `<span class="ip-badge" title="${d.ips.join(', ')}">${d.ips.length} IP</span>` : '';
+    const domain = escapeHtml(d.domain);
+    const jsDomain = JSON.stringify(d.domain);
     return `<div class="domain-item">
-      <span class="domain-name">${escapeHtml(d.domain)}</span>
-      <span class="source-tag">${d.source}</span>
-      ${ips}
+      <div class="domain-body">
+        <span class="domain-name">${domain}</span>
+        <span class="domain-tags">
+          <span class="source-tag">${d.source}</span>
+          ${ips}
+        </span>
+      </div>
+      <button class="btn-copy-domain" onclick="copyText(${jsDomain}, this)">${COPY_ICON} 复制</button>
     </div>`;
   }).join('');
 
