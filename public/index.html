@@ -6,94 +6,120 @@
   <title>优选IP反查域名</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      font-family: 'Lora', Georgia, 'Times New Roman', serif;
-      background: #F4F3EE;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0F172A;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: #1B1B1B;
+      color: #F8FAFC;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
     }
 
+    /* ── Header ────────────────────────────── */
     header {
       text-align: center;
-      padding: 80px 20px 40px;
+      padding: 72px 20px 40px;
       width: 100%;
       max-width: 640px;
     }
     header h1 {
-      font-family: 'Poppins', sans-serif;
       font-size: 32px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: -0.5px;
-      color: #1B1B1B;
+      color: #F8FAFC;
     }
-    header h1 span { color: #D97757; }
+    header h1 span { color: #22C55E; }
     header p {
-      margin-top: 12px;
+      margin-top: 10px;
       font-size: 16px;
-      color: #7C7B76;
+      color: #94A3B8;
+      font-weight: 400;
     }
 
+    /* ── Card ──────────────────────────────── */
     .card {
       width: 100%;
       max-width: 640px;
       margin: 0 20px;
-      background: #FFFFFF;
-      border: 1px solid #E8E6DC;
-      border-radius: 20px;
-      padding: 36px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.04);
+      background: #1E293B;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.3), 0 4px 20px rgba(0,0,0,.15);
     }
 
-    .input-area {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-    .input-row {
-      display: flex;
-      gap: 10px;
-    }
-    .input-row input {
+    /* ── Input Area ────────────────────────── */
+    .input-area { display: flex; flex-direction: column; gap: 14px; }
+
+    .input-row { display: flex; gap: 10px; }
+
+    .input-wrapper {
       flex: 1;
-      padding: 14px 18px;
-      background: #F4F3EE;
-      border: 1px solid #E8E6DC;
-      border-radius: 12px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper svg {
+      position: absolute;
+      left: 14px;
+      width: 18px;
+      height: 18px;
+      color: #64748B;
+      pointer-events: none;
+    }
+    .input-wrapper input {
+      width: 100%;
+      padding: 13px 16px 13px 42px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
       font-size: 16px;
-      color: #1B1B1B;
-      font-family: 'Lora', Georgia, serif;
+      color: #F8FAFC;
+      font-family: inherit;
       outline: none;
-      transition: border-color .15s, box-shadow .15s;
+      transition: border-color .2s, box-shadow .2s;
     }
-    .input-row input::placeholder { color: #B0AEAA; }
-    .input-row input:focus {
-      border-color: #D97757;
-      box-shadow: 0 0 0 3px rgba(217,119,87,.08);
+    .input-wrapper input::placeholder { color: #64748B; }
+    .input-wrapper input:focus {
+      border-color: #22C55E;
+      box-shadow: 0 0 0 3px rgba(34,197,94,.15);
     }
-    .input-row button {
-      padding: 14px 32px;
-      background: #D97757;
-      color: #FFFFFF;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 500;
-      font-family: 'Poppins', sans-serif;
-      cursor: pointer;
-      transition: background .15s;
-      white-space: nowrap;
-    }
-    .input-row button:hover { background: #C06548; }
-    .input-row button:disabled { opacity: .3; cursor: not-allowed; }
 
+    .input-row button {
+      padding: 13px 28px;
+      background: #22C55E;
+      color: #0F172A;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background .2s, transform .1s;
+      white-space: nowrap;
+      min-height: 48px;
+    }
+    .input-row button:hover { background: #16A34A; }
+    .input-row button:active { transform: scale(.97); }
+    .input-row button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .input-row button:focus-visible {
+      outline: 2px solid #22C55E;
+      outline-offset: 2px;
+    }
+
+    /* ── Option Row ────────────────────────── */
     .option-row {
       display: flex;
       align-items: center;
@@ -105,18 +131,18 @@
       align-items: center;
       gap: 10px;
       cursor: pointer;
-      font-size: 15px;
-      color: #7C7B76;
-      font-family: 'Lora', Georgia, serif;
+      font-size: 14px;
+      color: #94A3B8;
+      user-select: none;
     }
     .toggle-label input { display: none; }
     .toggle-track {
       position: relative;
       width: 40px;
       height: 24px;
-      background: #E8E6DC;
+      background: #334155;
       border-radius: 12px;
-      transition: background .15s;
+      transition: background .2s;
       flex-shrink: 0;
     }
     .toggle-track::after {
@@ -124,27 +150,50 @@
       position: absolute;
       top: 3px; left: 3px;
       width: 18px; height: 18px;
-      background: #FFFFFF;
+      background: #64748B;
       border-radius: 50%;
-      transition: transform .15s, background .15s;
+      transition: transform .2s, background .2s;
     }
-    .toggle-label input:checked + .toggle-track { background: rgba(217,119,87,.3); }
+    .toggle-label input:checked + .toggle-track { background: rgba(34,197,94,.25); }
     .toggle-label input:checked + .toggle-track::after {
       transform: translateX(16px);
-      background: #D97757;
+      background: #22C55E;
     }
-    .option-row .hint { font-size: 13px; color: #B0AEAA; }
+    .toggle-label:focus-within .toggle-track {
+      outline: 2px solid #22C55E;
+      outline-offset: 2px;
+    }
+    .option-row .hint {
+      font-size: 13px;
+      color: #64748B;
+    }
 
+    /* ── Status ─────────────────────────────── */
     #status {
-      margin-top: 20px;
-      font-size: 15px;
-      color: #7C7B76;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #94A3B8;
       min-height: 22px;
+      transition: color .2s;
     }
-    #status.error { color: #D97757; }
+    #status.error { color: #EF4444; }
+    #status.success { color: #22C55E; }
 
+    /* ── Skeleton Loading ──────────────────── */
+    .skeleton {
+      background: linear-gradient(90deg, #1E293B 25%, #334155 50%, #1E293B 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── Result ────────────────────────────── */
     #result {
-      margin-top: 8px;
+      margin-top: 6px;
       display: none;
     }
     #result.visible { display: block; }
@@ -152,29 +201,33 @@
     .stat-bar {
       display: flex;
       gap: 24px;
-      padding: 14px 18px;
-      background: #F4F3EE;
-      border: 1px solid #E8E6DC;
-      border-radius: 12px;
-      margin-bottom: 18px;
+      padding: 12px 16px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      margin-bottom: 16px;
       font-size: 14px;
-      color: #7C7B76;
+      color: #94A3B8;
       flex-wrap: wrap;
     }
-    .stat-bar strong { color: #1B1B1B; font-weight: 500; }
+    .stat-bar strong { color: #F8FAFC; font-weight: 600; }
 
     .domain-list { display: flex; flex-direction: column; gap: 6px; }
+
     .domain-item {
       display: flex;
       align-items: stretch;
-      background: #F4F3EE;
-      border: 1px solid #E8E6DC;
-      border-radius: 12px;
-      font-size: 15px;
+      background: #0F172A;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      font-size: 14px;
       overflow: hidden;
-      transition: border-color .15s;
+      transition: border-color .2s, background .2s;
     }
-    .domain-item:hover { border-color: #D0CFC6; }
+    .domain-item:hover {
+      border-color: #475569;
+      background: #1A2333;
+    }
 
     .domain-item .domain-body {
       flex: 1;
@@ -188,8 +241,9 @@
       flex: 1;
       min-width: 0;
       word-break: break-all;
-      color: #1B1B1B;
+      color: #F8FAFC;
       user-select: all;
+      font-weight: 500;
     }
     .domain-item .domain-tags {
       display: flex;
@@ -199,19 +253,19 @@
     }
     .domain-item .source-tag {
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       padding: 3px 10px;
       border-radius: 6px;
-      background: rgba(217,119,87,.1);
-      color: #D97757;
-      font-family: 'Poppins', sans-serif;
+      background: rgba(34,197,94,.12);
+      color: #4ADE80;
     }
     .domain-item .ip-badge {
       font-size: 12px;
-      color: #7C7B76;
-      background: rgba(0,0,0,.03);
+      color: #94A3B8;
+      background: rgba(100,116,139,.15);
       padding: 3px 10px;
       border-radius: 6px;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
     }
 
     .btn-copy-domain {
@@ -219,77 +273,88 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 18px;
-      min-width: 68px;
+      padding: 0 20px;
+      min-width: 72px;
       background: transparent;
       border: none;
       border-left: 1px solid transparent;
       font-size: 13px;
       font-weight: 500;
-      font-family: 'Poppins', sans-serif;
-      color: #B0AEAA;
+      font-family: inherit;
+      color: #64748B;
       cursor: pointer;
-      transition: background .15s, color .15s;
+      transition: background .2s, color .2s, border-color .2s;
     }
-    .domain-item:hover .btn-copy-domain { border-left-color: #E8E6DC; }
-    .btn-copy-domain:hover { background: rgba(217,119,87,.06); color: #D97757; }
-    .btn-copy-domain.copied { color: #D97757; }
+    .domain-item:hover .btn-copy-domain { border-left-color: #334155; }
+    .btn-copy-domain:hover { background: rgba(34,197,94,.08); color: #4ADE80; }
+    .btn-copy-domain.copied { color: #22C55E; }
 
+    /* ── Toast ─────────────────────────────── */
     .toast {
       position: fixed;
       bottom: 32px;
       left: 50%;
       transform: translateX(-50%);
-      background: #1B1B1B;
-      color: #F4F3EE;
+      background: #334155;
+      color: #F8FAFC;
       padding: 12px 28px;
-      border-radius: 12px;
-      font-size: 15px;
+      border-radius: 10px;
+      font-size: 14px;
       font-weight: 500;
-      font-family: 'Poppins', sans-serif;
+      font-family: inherit;
       opacity: 0;
       transition: opacity .2s;
       pointer-events: none;
-      z-index: 100;
+      z-index: 50;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
     }
     .toast.visible { opacity: 1; }
 
+    /* ── Section Title ─────────────────────── */
     .section-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: #7C7B76;
-      font-family: 'Poppins', sans-serif;
-      margin: 24px 0 12px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #94A3B8;
+      margin: 22px 0 10px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
     }
     .ip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+
     .ip-chip {
-      padding: 7px 14px;
-      background: #F4F3EE;
-      border: 1px solid #E8E6DC;
+      padding: 6px 14px;
+      background: #0F172A;
+      border: 1px solid #334155;
       border-radius: 8px;
       font-size: 13px;
-      color: #7C7B76;
-      font-family: 'SF Mono', 'Fira Code', monospace;
+      color: #94A3B8;
+      font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
       cursor: pointer;
       user-select: all;
-      transition: border-color .15s, color .15s;
+      transition: border-color .2s, color .2s, background .2s;
     }
-    .ip-chip:hover { border-color: #D0CFC6; color: #1B1B1B; }
+    .ip-chip:hover {
+      border-color: #22C55E;
+      color: #4ADE80;
+      background: rgba(34,197,94,.06);
+    }
 
+    /* ── Footer ────────────────────────────── */
     footer {
       margin-top: 32px;
       padding: 24px;
       text-align: center;
       font-size: 13px;
-      color: #B0AEAA;
+      color: #64748B;
     }
-    footer a { color: #7C7B76; text-decoration: none; }
-    footer a:hover { color: #D97757; }
+    footer a { color: #94A3B8; text-decoration: none; transition: color .2s; }
+    footer a:hover { color: #22C55E; }
 
+    /* ── Responsive ────────────────────────── */
     @media (max-width: 520px) {
       header { padding: 48px 16px 24px; }
       header h1 { font-size: 26px; }
-      .card { margin: 0 12px; padding: 24px; border-radius: 16px; }
+      .card { margin: 0 12px; padding: 24px; border-radius: 14px; }
       .input-row { flex-direction: column; }
       .input-row button { width: 100%; padding: 14px; }
       .domain-item { flex-direction: column; }
@@ -302,12 +367,19 @@
         border-left: none;
         border-top: 1px solid transparent;
       }
-      .domain-item:hover .btn-copy-domain { border-top-color: #E8E6DC; border-left-color: transparent; }
+      .domain-item:hover .btn-copy-domain {
+        border-top-color: #334155;
+        border-left-color: transparent;
+      }
       .stat-bar { flex-direction: column; gap: 4px; }
+      .option-row .hint { display: none; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { transition-duration: 0s !important; }
+      *, *::before, *::after {
+        transition-duration: 0s !important;
+        animation-duration: 0s !important;
+      }
     }
   </style>
 </head>
@@ -321,7 +393,13 @@
 <div class="card">
   <div class="input-area">
     <div class="input-row">
-      <input type="text" id="ipInput" placeholder="例如 162.159.32.192" spellcheck="false" autocomplete="off" />
+      <label class="input-wrapper" aria-label="输入 IPv4 地址">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" id="ipInput" placeholder="例如 162.159.32.192" spellcheck="false" autocomplete="off" />
+      </label>
       <button id="searchBtn" onclick="lookup()">查询</button>
     </div>
     <div class="option-row">
@@ -330,7 +408,7 @@
         <span class="toggle-track"></span>
         <span>解析 DNS 发现更多 IP</span>
       </label>
-      <span class="hint">将对查到的域名做 DNS 解析</span>
+      <span class="hint">对查到的域名做 DNS 解析</span>
     </div>
   </div>
 
@@ -406,7 +484,7 @@ async function lookup() {
     return;
   }
 
-  setStatus('正在查询中，请稍候...', false);
+  setStatus('正在查询中...', false);
   searchBtn.disabled = true;
   resultEl.classList.remove('visible');
 
@@ -416,9 +494,9 @@ async function lookup() {
   try {
     const resp = await fetch('/api/lookup?' + params.toString());
     const data = await resp.json();
-    if (data.error) { setStatus('查询失败：' + data.error, true); return; }
+    if (data.error) { setStatus(data.error, true); return; }
     renderResults(data);
-    setStatus(`共找到 ${data.total} 个域名` + (data.ips?.length ? `，解析出 ${data.ips.length} 个 IP` : ''), false);
+    setStatus(`共找到 ${data.total} 个域名` + (data.ips?.length ? `，解析出 ${data.ips.length} 个 IP` : ''), false, true);
   } catch (e) {
     setStatus('网络错误：' + e.message, true);
   } finally {
@@ -426,9 +504,9 @@ async function lookup() {
   }
 }
 
-function setStatus(msg, isError) {
+function setStatus(msg, isError, isSuccess) {
   statusEl.textContent = msg;
-  statusEl.className = isError ? 'error' : '';
+  statusEl.className = isError ? 'error' : (isSuccess ? 'success' : '');
 }
 
 function renderResults(data) {
