@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>优选IP反查域名</title>
+  <style>
+    /* ========== Reset & Base ========== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 40%, #24243e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #e0e0e0;
+    }
+
+    /* ========== Header ========== */
+    header {
+      text-align: center;
+      padding: 48px 20px 24px;
+      width: 100%;
+      max-width: 720px;
+    }
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+    }
+    header p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+
+    /* ========== Card ========== */
+    .card {
+      width: 100%;
+      max-width: 720px;
+      margin: 0 20px;
+      background: rgba(30, 30, 70, 0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.3);
+    }
+
+    /* ========== Input Area ========== */
+    .input-area {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .input-row input {
+      flex: 1;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 12px;
+      font-size: 16px;
+      color: #fff;
+      outline: none;
+      transition: border .2s, background .2s;
+    }
+    .input-row input::placeholder { color: #64748b; }
+    .input-row input:focus { border-color: #60a5fa; background: rgba(255,255,255,0.1); }
+    .input-row button {
+      padding: 12px 28px;
+      background: linear-gradient(135deg, #60a5fa, #7c3aed);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s, box-shadow .2s;
+      white-space: nowrap;
+    }
+    .input-row button:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(96,165,250,.35); }
+    .input-row button:active { transform: translateY(0); }
+    .input-row button:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    /* ========== Toggle Switch ========== */
+    .option-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 4px;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      user-select: none;
+      font-size: 14px;
+      color: #94a3b8;
+    }
+    .toggle-label input { display: none; }
+    .toggle-track {
+      position: relative;
+      width: 40px;
+      height: 22px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 11px;
+      transition: background .2s;
+      flex-shrink: 0;
+    }
+    .toggle-track::after {
+      content: '';
+      position: absolute;
+      top: 3px; left: 3px;
+      width: 16px; height: 16px;
+      background: #64748b;
+      border-radius: 50%;
+      transition: transform .2s, background .2s;
+    }
+    .toggle-label input:checked + .toggle-track { background: rgba(96,165,250,.35); }
+    .toggle-label input:checked + .toggle-track::after {
+      transform: translateX(18px);
+      background: #60a5fa;
+    }
+    .option-row .hint {
+      font-size: 12px;
+      color: #475569;
+    }
+
+    /* ========== Status & Error ========== */
+    #status {
+      margin-top: 16px;
+      padding: 0 4px;
+      font-size: 14px;
+      color: #94a3b8;
+      min-height: 20px;
+    }
+    #status.error { color: #f87171; }
+
+    /* ========== Results ========== */
+    #result {
+      margin-top: 8px;
+      display: none;
+    }
+    #result.visible { display: block; }
+
+    .stat-bar {
+      display: flex;
+      gap: 16px;
+      padding: 12px 16px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #94a3b8;
+      flex-wrap: wrap;
+    }
+    .stat-bar strong { color: #e0e0e0; }
+
+    /* ========== Domain List ========== */
+    .domain-list { display: flex; flex-direction: column; gap: 6px; }
+    .domain-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 10px;
+      font-size: 14px;
+      transition: background .15s;
+    }
+    .domain-item:hover { background: rgba(255,255,255,0.07); }
+    .domain-item .domain-name {
+      flex: 1;
+      word-break: break-all;
+      color: #e0e0e0;
+    }
+    .domain-item .source-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(96,165,250,0.15);
+      color: #93c5fd;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .domain-item .ip-badge {
+      font-size: 11px;
+      color: #64748b;
+      background: rgba(255,255,255,0.05);
+      padding: 2px 8px;
+      border-radius: 6px;
+      cursor: default;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .domain-item .ip-badge:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* ========== IP List ========== */
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #94a3b8;
+      margin: 20px 0 10px;
+      padding: 0 4px;
+    }
+    .ip-list { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ip-chip {
+      padding: 6px 12px;
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.15);
+      border-radius: 8px;
+      font-size: 13px;
+      color: #c4b5fd;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* ========== Footer ========== */
+    footer {
+      margin-top: 24px;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #475569;
+    }
+    footer a { color: #60a5fa; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ========== Responsive ========== */
+    @media (max-width: 520px) {
+      header { padding: 32px 16px 16px; }
+      header h1 { font-size: 22px; }
+      .card { margin: 0 12px; padding: 20px; border-radius: 16px; }
+      .input-row { flex-direction: column; }
+      .input-row button { width: 100%; padding: 12px; }
+      .domain-item { flex-wrap: wrap; }
+      .domain-item .source-tag { order: -1; }
+      .stat-bar { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>优选IP反查域名</h1>
+  <p>输入一个 IP 地址，查出它背后托管的所有域名</p>
+</header>
+
+<div class="card">
+  <div class="input-area">
+    <div class="input-row">
+      <input type="text" id="ipInput" placeholder="例如 162.159.32.192" spellcheck="false" autocomplete="off" />
+      <button id="searchBtn" onclick="lookup()">查询</button>
+    </div>
+
+    <div class="option-row">
+      <label class="toggle-label">
+        <input type="checkbox" id="dnsCheck" />
+        <span class="toggle-track"></span>
+        <span>解析 DNS 发现更多 IP</span>
+      </label>
+      <span class="hint">将对查到的域名做 DNS 解析</span>
+    </div>
+  </div>
+
+  <div id="status"></div>
+
+  <div id="result">
+    <div class="stat-bar" id="statBar"></div>
+    <div class="domain-list" id="domainList"></div>
+    <div class="section-title" id="ipsTitle" style="display:none">📌 解析出的 IP</div>
+    <div class="ip-list" id="ipList"></div>
+  </div>
+</div>
+
+<footer>
+  powered by Cloudflare Pages &middot;
+  <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+</footer>
+
+<script>
+const ipInput = document.getElementById('ipInput');
+const searchBtn = document.getElementById('searchBtn');
+const dnsCheck = document.getElementById('dnsCheck');
+const statusEl = document.getElementById('status');
+const resultEl = document.getElementById('result');
+const statBar = document.getElementById('statBar');
+const domainList = document.getElementById('domainList');
+const ipsTitle = document.getElementById('ipsTitle');
+const ipList = document.getElementById('ipList');
+
+ipInput.addEventListener('keydown', e => { if (e.key === 'Enter') lookup(); });
+
+async function lookup() {
+  const ip = ipInput.value.trim();
+  if (!ip) {
+    setStatus('请输入 IP 地址', true);
+    return;
+  }
+  if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(ip)) {
+    setStatus('IP 格式不正确，请输入 IPv4 地址', true);
+    return;
+  }
+
+  setStatus('正在查询中，请稍候...', false);
+  searchBtn.disabled = true;
+  resultEl.classList.remove('visible');
+
+  const doDns = dnsCheck.checked;
+  const params = new URLSearchParams({ ip, dns: doDns ? '1' : '' });
+  const url = '/api/lookup?' + params.toString();
+
+  try {
+    const resp = await fetch(url);
+    const data = await resp.json();
+
+    if (data.error) {
+      setStatus('查询失败：' + data.error, true);
+      return;
+    }
+
+    renderResults(data);
+    setStatus(`共找到 ${data.total} 个域名` + (data.ips?.length ? `，解析出 ${data.ips.length} 个 IP` : ''), false);
+
+  } catch (e) {
+    setStatus('网络错误：' + e.message, true);
+  } finally {
+    searchBtn.disabled = false;
+  }
+}
+
+function setStatus(msg, isError) {
+  statusEl.textContent = msg;
+  statusEl.className = isError ? 'error' : '';
+}
+
+function renderResults(data) {
+  // Stats
+  statBar.innerHTML = `
+    <span>域名 <strong>${data.total}</strong></span>
+    <span>数据来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
+    ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
+  `;
+
+  // Domains
+  domainList.innerHTML = data.domains.map(d => {
+    const ips = d.ips?.length ? `<span class="ip-badge" title="${d.ips.join(', ')}">${d.ips.length} IP</span>` : '';
+    return `<div class="domain-item">
+      <span class="domain-name">${escapeHtml(d.domain)}</span>
+      <span class="source-tag">${d.source}</span>
+      ${ips}
+    </div>`;
+  }).join('');
+
+  // IPs
+  if (data.ips?.length) {
+    ipsTitle.style.display = 'block';
+    ipList.innerHTML = data.ips.map(ip => `<span class="ip-chip">${ip}</span>`).join('');
+  } else {
+    ipsTitle.style.display = 'none';
+    ipList.innerHTML = '';
+  }
+
+  resultEl.classList.add('visible');
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>
