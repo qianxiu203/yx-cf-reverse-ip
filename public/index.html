@@ -172,30 +172,6 @@
     }
     .stat-bar strong { color: #F8FAFC; }
 
-    /* ========== Result Toolbar ========== */
-    .result-toolbar {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 10px;
-    }
-    .btn-copy-all {
-      padding: 6px 16px;
-      background: transparent;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      font-family: 'Work Sans', sans-serif;
-      color: #94A3B8;
-      cursor: pointer;
-      transition: border-color .15s, color .15s;
-    }
-    .btn-copy-all:hover {
-      border-color: #22C55E;
-      color: #22C55E;
-    }
-    .btn-copy-all:active { opacity: .7; }
-
     /* ========== Domain List ========== */
     .domain-list { display: flex; flex-direction: column; gap: 6px; }
     .domain-item {
@@ -365,8 +341,6 @@
       }
       .domain-item:hover .btn-copy-domain { border-top-color: #334155; border-left-color: transparent; }
       .stat-bar { flex-direction: column; gap: 4px; }
-      .result-toolbar { justify-content: stretch; }
-      .btn-copy-all { width: 100%; text-align: center; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -402,9 +376,6 @@
 
   <div id="result">
     <div class="stat-bar" id="statBar"></div>
-    <div class="result-toolbar">
-      <button class="btn-copy-all" id="copyAllBtn" onclick="copyAllDomains()">复制全部</button>
-    </div>
     <div class="domain-list" id="domainList"></div>
     <div class="section-title" id="ipsTitle" style="display:none">解析出的 IP</div>
     <div class="ip-list" id="ipList"></div>
@@ -459,12 +430,6 @@ async function copyText(text, btn) {
   }
 }
 
-function copyAllDomains() {
-  const names = window._domainNames || [];
-  if (names.length === 0) { showToast('没有可复制的域名'); return; }
-  copyText(names.join('\n'), document.getElementById('copyAllBtn'));
-}
-
 async function lookup() {
   const ip = ipInput.value.trim();
   if (!ip) {
@@ -514,10 +479,6 @@ function renderResults(data) {
     <span>数据来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
     ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
   `;
-
-  window._domainNames = data.domains.map(d => d.domain);
-
-  document.getElementById('copyAllBtn').innerHTML = `${COPY_ICON} 复制全部`;
 
   domainList.innerHTML = data.domains.map(d => {
     const ips = d.ips?.length ? `<span class="ip-badge" title="${d.ips.join(', ')}">${d.ips.length} IP</span>` : '';
