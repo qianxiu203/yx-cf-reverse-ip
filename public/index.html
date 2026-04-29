@@ -394,6 +394,14 @@
       </label>
       <span class="hint">对查到的域名做 DNS 解析</span>
     </div>
+    <div class="option-row">
+      <label class="toggle-label">
+        <input type="checkbox" id="accessibleCheck" />
+        <span class="toggle-track"></span>
+        <span>仅显示可访问的域名</span>
+      </label>
+      <span class="hint">测试域名是否可访问，过滤不可达的域名</span>
+    </div>
   </div>
 
   <div id="status"></div>
@@ -417,6 +425,7 @@
 const ipInput = document.getElementById('ipInput');
 const searchBtn = document.getElementById('searchBtn');
 const dnsCheck = document.getElementById('dnsCheck');
+const accessibleCheck = document.getElementById('accessibleCheck');
 const statusEl = document.getElementById('status');
 const resultEl = document.getElementById('result');
 const statBar = document.getElementById('statBar');
@@ -468,19 +477,28 @@ async function lookup() {
     return;
   }
 
-  setStatus('正在查询中...', false);
+  const doDns = dnsCheck.checked;
+  const doAccessible = accessibleCheck.checked;
+
+  setStatus(doAccessible ? '正在查询并测试域名可访问性...' : '正在查询中...', false);
   searchBtn.disabled = true;
   resultEl.classList.remove('visible');
 
-  const doDns = dnsCheck.checked;
-  const params = new URLSearchParams({ ip, dns: doDns ? '1' : '' });
+  const params = new URLSearchParams({ ip, dns: doDns ? '1' : '', accessible: doAccessible ? '1' : '' });
 
   try {
     const resp = await fetch('/api/lookup?' + params.toString());
     const data = await resp.json();
     if (data.error) { setStatus(data.error, true); return; }
     renderResults(data);
-    setStatus(`共找到 ${data.total} 个域名` + (data.ips?.length ? `，解析出 ${data.ips.length} 个 IP` : ''), false, true);
+    let statusMsg = `共找到 ${data.total} 个域名`;
+    if (data.accessible && data.total_raw > data.total) {
+      statusMsg += `（已过滤 ${data.total_raw - data.total} 个不可达域名）`;
+    }
+    if (data.ips?.length) {
+      statusMsg += `，解析出 ${data.ips.length} 个 IP`;
+    }
+    setStatus(statusMsg, false, true);
   } catch (e) {
     setStatus('网络错误：' + e.message, true);
   } finally {
@@ -497,6 +515,7 @@ function renderResults(data) {
   statBar.innerHTML = `
     <span>域名 <strong>${data.total}</strong></span>
     <span>来源 <strong>${data.sources?.join(', ') || '-'}</strong></span>
+    ${data.accessible && data.total_raw > data.total ? `<span>已过滤 <strong>${data.total_raw - data.total}</strong></span>` : ''}
     ${data.ips?.length ? `<span>解析 IP <strong>${data.ips.length}</strong></span>` : ''}
   `;
 
