@@ -68,6 +68,73 @@
 - [crt.sh](https://crt.sh/)
 - [ipchaxun](https://ipchaxun.com/)
 
+## API 文档
+
+### `GET /api/lookup`
+
+反向 IP 查询接口。
+
+**参数：**
+
+| 参数 | 必需 | 说明 |
+|------|------|------|
+| `ip` | 是 | IPv4 地址，例如 `8.8.8.8` |
+| `dns` | 否 | 设为 `1` 开启 DNS 解析，发现更多关联 IP |
+| `accessible` | 否 | 设为 `1` 仅返回可访问的域名（过滤不可达域名） |
+
+**成功响应（200）：**
+
+```json
+{
+  "ip": "8.8.8.8",
+  "accessible": false,
+  "total_raw": 50,
+  "total": 50,
+  "sources": ["hackertarget", "ip138"],
+  "domains": [
+    { "domain": "example.com", "source": "hackertarget" }
+  ],
+  "ips": [],
+  "source_errors": []
+}
+```
+
+**错误响应：**
+
+| 状态码 | 说明 |
+|--------|------|
+| 400 | `缺少 ip 参数` 或 `无效的 IP 地址格式` |
+| 429 | `请求过于频繁，请稍后再试`（每分钟最多 30 次） |
+| 500 | `服务器内部错误` |
+
+**示例：**
+
+```bash
+curl "https://your-project.pages.dev/api/lookup?ip=8.8.8.8"
+curl "https://your-project.pages.dev/api/lookup?ip=1.1.1.1&dns=1&accessible=1"
+```
+
+## 本地开发
+
+```bash
+# 安装依赖
+npm install
+
+# 启动本地开发服务器
+npm run dev
+# → 访问 http://localhost:8788
+```
+
+## 测试
+
+```bash
+# 运行所有测试
+npm test
+
+# 监听模式
+npm run test:watch
+```
+
 ## License
 
 MIT
