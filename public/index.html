@@ -399,9 +399,9 @@
       <label class="toggle-label">
         <input type="checkbox" id="accessibleCheck" />
         <span class="toggle-track"></span>
-        <span>仅显示可访问的域名</span>
+        <span>仅显示443端口可访问的域名</span>
       </label>
-      <span class="hint">测试域名是否可访问，过滤不可达的域名</span>
+      <span class="hint">检测域名443端口(HTTPS)是否开放</span>
     </div>
   </div>
 
@@ -481,7 +481,7 @@ async function lookup() {
   const doDns = dnsCheck.checked;
   const doAccessible = accessibleCheck.checked;
 
-  setStatus(doAccessible ? '正在查询并测试域名可访问性...' : '正在查询中...', false);
+  setStatus(doAccessible ? '正在查询并检测443端口...' : '正在查询中...', false);
   searchBtn.disabled = true;
   resultEl.classList.remove('visible');
 
@@ -494,7 +494,7 @@ async function lookup() {
     renderResults(data);
     let statusMsg = `共找到 ${data.total} 个域名`;
     if (data.accessible && data.total_raw > data.total) {
-      statusMsg += `（已过滤 ${data.total_raw - data.total} 个不可达域名）`;
+      statusMsg += `（已过滤 ${data.total_raw - data.total} 个443端口不可达域名）`;
     }
     if (data.ips?.length) {
       statusMsg += `，解析出 ${data.ips.length} 个 IP`;

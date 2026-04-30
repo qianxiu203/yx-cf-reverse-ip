@@ -128,7 +128,7 @@ async function dnsLookup(domain) {
     .filter(ip => !isPrivateIP(ip));
 }
 
-// ── Accessibility Check ──────────────────────
+// ── Port 443 Check ───────────────────────────
 
 async function checkAccessibility(domain) {
   const controller = new AbortController();
@@ -143,17 +143,7 @@ async function checkAccessibility(domain) {
     });
     return true;
   } catch {
-    try {
-      await fetch(`http://${domain}/`, {
-        method: 'HEAD',
-        signal: controller.signal,
-        redirect: 'follow',
-        headers: { 'User-Agent': 'Mozilla/5.0' },
-      });
-      return true;
-    } catch {
-      return false;
-    }
+    return false;
   } finally {
     clearTimeout(timeout);
   }
