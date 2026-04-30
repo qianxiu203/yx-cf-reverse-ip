@@ -7,10 +7,9 @@
 
 // ── Constants ────────────────────────────────
 
-const ACCESSIBLE_TIMEOUT = 5000;
+const ACCESSIBLE_TIMEOUT = 3000;
 const ACCESSIBLE_BATCH_SIZE = 10;
 const ACCESSIBLE_CHECK_LIMIT = 100;
-const ACCESSIBLE_MAX_LATENCY = 5000;
 const DNS_BATCH_SIZE = 15;
 const CACHE_MAX_AGE = 300;
 const GLOBAL_TIMEOUT_MS = 25000;
@@ -134,7 +133,6 @@ async function dnsLookup(domain) {
 async function checkAccessibility(domain) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ACCESSIBLE_TIMEOUT);
-  const start = Date.now();
 
   try {
     await fetch(`https://${domain}/`, {
@@ -143,9 +141,9 @@ async function checkAccessibility(domain) {
       redirect: 'follow',
       headers: { 'User-Agent': 'Mozilla/5.0' },
     });
-    return { accessible: true, latency: Date.now() - start };
+    return true;
   } catch {
-    return { accessible: false, latency: -1 };
+    return false;
   } finally {
     clearTimeout(timeout);
   }
@@ -190,27 +188,22 @@ function deduplicateDomains(domains) {
   return unique;
 }
 
-async function filterAccessibleDomains(uniqueDomains, maxLatency = ACCESSIBLE_MAX_LATENCY) {
+async function filterAccessibleDomains(uniqueDomains) {
   const domainNames = uniqueDomains.map(d => d.domain);
   const toCheck = domainNames.slice(0, ACCESSIBLE_CHECK_LIMIT);
-  const latencyMap = new Map();
+  const accessibleSet = new Set();
 
   for (let i = 0; i < toCheck.length; i += ACCESSIBLE_BATCH_SIZE) {
     const batch = toCheck.slice(i, i + ACCESSIBLE_BATCH_SIZE);
     const results = await Promise.allSettled(batch.map(d => checkAccessibility(d)));
     for (let j = 0; j < results.length; j++) {
-      if (results[j].status === 'fulfilled') {
-        const { accessible, latency } = results[j].value;
-        if (accessible && latency <= maxLatency) {
-          latencyMap.set(batch[j].toLowerCase(), latency);
-        }
+      if (results[j].status === 'fulfilled' && results[j].value === true) {
+        accessibleSet.add(batch[j].toLowerCase());
       }
     }
   }
 
-  return uniqueDomains
-    .filter(d => latencyMap.has(d.domain.toLowerCase()))
-    .map(d => ({ ...d, latency: latencyMap.get(d.domain.toLowerCase()) }));
+  return uniqueDomains.filter(d => accessibleSet.has(d.domain.toLowerCase()));
 }
 
 async function resolveDnsForDomains(uniqueDomains) {
@@ -257,7 +250,6 @@ export async function onRequest(context) {
   const ip = url.searchParams.get('ip');
   const doDns = url.searchParams.get('dns') === '1';
   const doAccessible = url.searchParams.get('accessible') === '1';
-  const maxLatency = parseInt(url.searchParams.get('max_latency')) || ACCESSIBLE_MAX_LATENCY;
 
   if (!ip) {
     return new Response(JSON.stringify({ error: MESSAGES.MISSING_IP }), {
@@ -291,7 +283,7 @@ export async function onRequest(context) {
 
     // Optional: filter by accessibility
     if (doAccessible && uniqueDomains.length > 0) {
-      uniqueDomains = await filterAccessibleDomains(uniqueDomains, maxLatency);
+      uniqueDomains = await filterAccessibleDomains(uniqueDomains);
     }
 
     // Optional: DNS resolution
@@ -303,7 +295,6 @@ export async function onRequest(context) {
     const body = {
       ip,
       accessible: doAccessible,
-      max_latency: maxLatency,
       total_raw: rawDomainCount,
       total: uniqueDomains.length,
       sources: [...new Set(uniqueDomains.map(d => d.source))],
