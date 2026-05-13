@@ -7,9 +7,9 @@
 
 // ── Constants ────────────────────────────────
 
-const ACCESSIBLE_TIMEOUT = 3000;
-const ACCESSIBLE_BATCH_SIZE = 10;
-const ACCESSIBLE_CHECK_LIMIT = 100;
+const ACCESSIBLE_TIMEOUT = 2500;
+const ACCESSIBLE_BATCH_SIZE = 5;
+const MAX_PROBE_LIMIT = 15;
 const DNS_BATCH_SIZE = 15;
 const CACHE_MAX_AGE = 300;
 const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
@@ -128,28 +128,44 @@ async function dnsLookup(domain) {
 
 // ── Port 443 Check ───────────────────────────
 
+// ── Lightweight Probe ──────────────────────────
+
+const PROBE_BLACKLIST = ['cloudflare', 'access denied', '403 forbidden'];
+
 async function checkAccessibility(domain) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ACCESSIBLE_TIMEOUT);
 
-  const doFetch = (method) => fetch(`https://${domain}/`, {
-    method,
-    signal: controller.signal,
-    redirect: 'follow',
-    headers: { 'User-Agent': 'Mozilla/5.0' },
-  });
-
   try {
-    await doFetch('HEAD');
-    return true;
-  } catch {
-    // HEAD rejected (e.g. 405) — fallback to GET
+    const resp = await fetch(`https://${domain}/`, {
+      method: 'GET',
+      signal: controller.signal,
+      redirect: 'follow',
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+
+    if (!resp.ok || !resp.body) return false;
+
+    const reader = resp.body.getReader();
+    let accessible = true;
+
     try {
-      await doFetch('GET');
-      return true;
-    } catch {
-      return false;
+      // Read only the first chunk — never drain the whole body
+      const { value, done } = await reader.read();
+      if (!done && value) {
+        const text = new TextDecoder().decode(value).toLowerCase();
+        if (PROBE_BLACKLIST.some(kw => text.includes(kw))) {
+          accessible = false;
+        }
+      }
+    } finally {
+      reader.cancel();          // kill the stream, free memory
+      reader.releaseLock();     // release reader lock
     }
+
+    return accessible;
+  } catch {
+    return false;
   } finally {
     clearTimeout(timeout);
   }
@@ -195,13 +211,17 @@ function deduplicateDomains(domains) {
 }
 
 async function filterAccessibleDomains(uniqueDomains) {
+  // Hard cap — Cloudflare Pages Functions limit: 50 subrequests per invocation
   const domainNames = uniqueDomains.map(d => d.domain);
-  const toCheck = domainNames.slice(0, ACCESSIBLE_CHECK_LIMIT);
+  const toProbe = domainNames.slice(0, MAX_PROBE_LIMIT);
+  const unprobedSet = new Set(domainNames.slice(MAX_PROBE_LIMIT).map(d => d.toLowerCase()));
   const accessibleSet = new Set();
+  let probesIssued = 0;
 
-  for (let i = 0; i < toCheck.length; i += ACCESSIBLE_BATCH_SIZE) {
-    const batch = toCheck.slice(i, i + ACCESSIBLE_BATCH_SIZE);
+  for (let i = 0; i < toProbe.length; i += ACCESSIBLE_BATCH_SIZE) {
+    const batch = toProbe.slice(i, i + ACCESSIBLE_BATCH_SIZE);
     const results = await Promise.allSettled(batch.map(d => checkAccessibility(d)));
+    probesIssued += batch.length;
     for (let j = 0; j < results.length; j++) {
       if (results[j].status === 'fulfilled' && results[j].value === true) {
         accessibleSet.add(batch[j].toLowerCase());
@@ -209,7 +229,15 @@ async function filterAccessibleDomains(uniqueDomains) {
     }
   }
 
-  return uniqueDomains.filter(d => accessibleSet.has(d.domain.toLowerCase()));
+  // Attach probed flag: true = tested & accessible, false = beyond cap / not tested
+  return uniqueDomains
+    .map(d => {
+      const key = d.domain.toLowerCase();
+      if (accessibleSet.has(key)) return { ...d, probed: true };
+      if (unprobedSet.has(key)) return { ...d, probed: false };
+      return null; // probed and failed — drop
+    })
+    .filter(Boolean);
 }
 
 async function resolveDnsForDomains(uniqueDomains) {
@@ -307,6 +335,10 @@ export async function onRequest(context) {
       domains: uniqueDomains,
       ips: resolvedIps,
     };
+    if (doAccessible) {
+      body.probed_count = uniqueDomains.filter(d => d.probed === true).length;
+      body.unprobed_count = uniqueDomains.filter(d => d.probed === false).length;
+    }
     body.source_errors = sourceErrors;
 
     return new Response(JSON.stringify(body), {
