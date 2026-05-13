@@ -12,8 +12,6 @@ const ACCESSIBLE_BATCH_SIZE = 10;
 const ACCESSIBLE_CHECK_LIMIT = 100;
 const DNS_BATCH_SIZE = 15;
 const CACHE_MAX_AGE = 300;
-const GLOBAL_TIMEOUT_MS = 25000;
-
 const IPV4_RE = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/;
 
 const CORS_HEADERS = { 'Access-Control-Allow-Origin': '*' };
@@ -65,7 +63,7 @@ const SOURCES = [
       if (!Array.isArray(data)) throw new Error('unexpected crt.sh response');
       return [...new Set(
         data
-          .flatMap(e => [e.name_value])
+          .flatMap(e => [e.name_value, e.common_name])
           .flatMap(n => n?.split('\n') || [])
           .map(d => d.trim().toLowerCase().replace(/^\*\./, ''))
           .filter(d => d.includes('.'))
@@ -134,16 +132,24 @@ async function checkAccessibility(domain) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ACCESSIBLE_TIMEOUT);
 
+  const doFetch = (method) => fetch(`https://${domain}/`, {
+    method,
+    signal: controller.signal,
+    redirect: 'follow',
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+  });
+
   try {
-    await fetch(`https://${domain}/`, {
-      method: 'HEAD',
-      signal: controller.signal,
-      redirect: 'follow',
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
+    await doFetch('HEAD');
     return true;
   } catch {
-    return false;
+    // HEAD rejected (e.g. 405) — fallback to GET
+    try {
+      await doFetch('GET');
+      return true;
+    } catch {
+      return false;
+    }
   } finally {
     clearTimeout(timeout);
   }
@@ -301,7 +307,7 @@ export async function onRequest(context) {
       domains: uniqueDomains,
       ips: resolvedIps,
     };
-    if (sourceErrors.length > 0) body.source_errors = sourceErrors;
+    body.source_errors = sourceErrors;
 
     return new Response(JSON.stringify(body), {
       headers: responseHeaders({ 'Cache-Control': `public, max-age=${CACHE_MAX_AGE}` }),
